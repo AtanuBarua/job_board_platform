@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\PermissionController;
 use App\Http\Controllers\Api\RoleController;
+use App\Http\Controllers\UserRoleController;
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
@@ -28,4 +29,8 @@ Route::prefix('admin')->middleware(['auth:sanctum', 'role:admin'])->group(functi
     Route::get('/roles/{id}', [RoleController::class, 'show'])->name('roles.show');
     Route::put('/roles/{id?}', [RoleController::class, 'update'])->name('roles.update');
     Route::delete('/roles/{id}', [RoleController::class, 'destroy'])->name('roles.destroy');
+
+    // User Role
+    Route::post('/assign-role/{userId}', [UserRoleController::class, 'assignRole']);
+    Route::post('/remove-role/{userId}', [UserRoleController::class, 'removeRole']);
 });
