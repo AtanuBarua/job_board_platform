@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Spatie\Permission\Models\Permission;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\Rule;
 
 class PermissionController extends Controller
 {
@@ -61,8 +62,15 @@ class PermissionController extends Controller
         ], Response::HTTP_CREATED);
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, $id = null)
     {
+        if (empty($id)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Permission id is required.',
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
         $permission = Permission::find($id);
 
         if (empty($permission)) {
@@ -73,11 +81,11 @@ class PermissionController extends Controller
         }
 
         $validated = $request->validate([
-            'name' => ['required', 'string', 'unique:permissions,name,except,id'],
+            'name' => ['required', 'string', Rule::unique('permissions', 'name')->ignore($id)],
         ]);
 
         try {
-            $permission->update(['name' => $validated['name']]);
+            $permission->update(['name' => strtolower($validated['name'])]);
 
             return response()->json([
                 'success' => true,
