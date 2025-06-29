@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\CompanyRegistrationController;
 use App\Http\Controllers\Api\PermissionController;
 use App\Http\Controllers\Api\RoleController;
 use App\Http\Controllers\Api\UserRoleController;
@@ -34,3 +35,5 @@ Route::prefix('admin')->middleware(['auth:sanctum', 'role:admin'])->group(functi
     Route::post('/assign-role/{userId}', [UserRoleController::class, 'assignRole']);
     Route::post('/remove-role/{userId}', [UserRoleController::class, 'removeRole']);
 });
+
+Route::post('/register-company', [CompanyRegistrationController::class, 'registerWithCompany']);
