@@ -19,11 +19,17 @@ class User extends Authenticatable
      *
      * @var list<string>
      */
+    const ROLE_PLATFORM_ADMIN = 'admin';
+    const ROLE_COMPANY_ADMIN = 'company admin';
+    const ROLE_JOB_SEEKER = 'job seeker';
+
     protected $fillable = [
         'name',
         'email',
         'password',
     ];
+
+    protected $guard_name = 'sanctum';
 
     /**
      * The attributes that should be hidden for serialization.
@@ -46,5 +52,10 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function company()
+    {
+        return $this->hasOne(Company::class, 'owner_id');
     }
 }
