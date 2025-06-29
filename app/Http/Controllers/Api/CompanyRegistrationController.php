@@ -41,10 +41,8 @@ class CompanyRegistrationController extends Controller
                 'password' => Hash::make($validated['password']),
             ]);
 
-            // Optional: assign role if using Spatie
             $user->assignRole(User::ROLE_COMPANY_ADMIN);
 
-            // Handle logo upload
             $logoPath = null;
             if ($request->hasFile('logo')) {
                 $logoPath = $request->file('logo')->store('logos', 'public');
