@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Mail\NewCompanyRegisteredMail;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
@@ -11,6 +12,7 @@ use Illuminate\Support\Facades\Log;
 use App\Models\Company;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Facades\Mail;
 
 class CompanyRegistrationController extends Controller
 {
@@ -68,6 +70,14 @@ class CompanyRegistrationController extends Controller
             $token = $user->createToken('auth_token')->plainTextToken;
 
             DB::commit();
+
+            $superAdmins = User::role(User::ROLE_PLATFORM_ADMIN)->get();
+
+            if (!empty($superAdmins)) {
+                foreach ($superAdmins as $admin) {
+                    Mail::to($admin->email)->queue(new NewCompanyRegisteredMail($company));
+                }
+            }            
 
             return response()->json([
                 'success' => true,
