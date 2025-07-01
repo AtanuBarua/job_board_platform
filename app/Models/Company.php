@@ -6,6 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Company extends Model
 {
+    const STATUS_PENDING = 'pending';
+    const STATUS_APPROVED = 'approved';
+    const STATUS_REJECTED = 'rejected';
+    const STATUS_SUSPENDED = 'suspended';
+
     protected $fillable = [
         'name',
         'slug',
@@ -16,6 +21,7 @@ class Company extends Model
         'address',
         'logo',
         'owner_id',
+        'status'
     ];
 
     public function owner()
@@ -26,5 +32,10 @@ class Company extends Model
     public function users()
     {
         return $this->hasMany(User::class);
+    }
+
+    public function isApproved(): bool
+    {
+        return $this->status === self::STATUS_APPROVED;
     }
 }
