@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\Admin\CompanyManagementController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
@@ -7,6 +8,7 @@ use App\Http\Controllers\Api\CompanyRegistrationController;
 use App\Http\Controllers\Api\PermissionController;
 use App\Http\Controllers\Api\RoleController;
 use App\Http\Controllers\Api\UserRoleController;
+use App\Http\Controllers\CompanyDashboardController;
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
@@ -34,6 +36,13 @@ Route::prefix('admin')->middleware(['auth:sanctum', 'role:admin'])->group(functi
     // User Role
     Route::post('/assign-role/{userId}', [UserRoleController::class, 'assignRole']);
     Route::post('/remove-role/{userId}', [UserRoleController::class, 'removeRole']);
+
+    Route::patch('/company/{companyId}/status', [CompanyManagementController::class, 'updateStatus']);
 });
 
 Route::post('/register-company', [CompanyRegistrationController::class, 'registerWithCompany']);
+Route::post('/company/login', [CompanyRegistrationController::class, 'login']);
+
+Route::middleware(['auth:sanctum', 'company.approved'])->group(function () {
+    Route::get('/company/dashboard', [CompanyDashboardController::class, 'index']);
+});
